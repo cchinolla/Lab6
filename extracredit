@@ -1,0 +1,55 @@
+import collections
+
+
+class extracredit:
+
+    def canFinish(self, numCourses, prerequisites):
+        map = [[] for x in range(numCourses)]
+        stuff = [0 for x in range(numCourses)]
+
+        for p in prerequisites:
+            if p[0] not in map[p[1]]:
+                stuff[p[0]] += 1
+                map[p[1]].append(p[0])
+        s = []
+        for i in range(numCourses):
+            if stuff[i] == 0:
+                s.append(i)
+        count = 0
+        while s:
+            tmp = s[0]
+            s.pop(0)
+            count += 1
+            for i in map[tmp]:
+                stuff[i] -= 1
+                if stuff[i] == 0:
+                    s.append(i)
+        if count < numCourses:
+            return False
+        else:
+            return True
+
+
+    def findMinHeightTrees(self, n, edges):
+        if n == 1:
+            return [0]
+        leaves = collections.defaultdict(set)
+        for a, b in edges:
+            leaves[a].add(b)
+            leaves[b].add(a)
+        que = collections.deque()
+        for a, vs in leaves.items():
+            if len(vs) == 1:
+                que.append(a)
+
+        while n > 2:
+            lens = len(que)
+            n -= lens
+            for c in range(lens):
+                a = que.popleft()
+                for b in leaves[a]:
+                    leaves[b].remove(a)
+                    if len(leaves[b]) == 1:
+                        que.append(b)
+        return list(que)
+
